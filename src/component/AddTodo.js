@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Button, TextField } from "@mui/material";
+import { DesktopDatePicker , LocalizationProvider} from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 class AddTodo extends Component {
   // Create a local react state of the this component with both content date property set to nothing.
@@ -7,12 +9,19 @@ class AddTodo extends Component {
     super();
     this.state = {
       content: "",
-      date: ""
+      date: "",
+      due : null,
     };
   }
   // The handleChange function updates the react state with the new input value provided from the user and the current date/time.
   // "event" is the defined action a user takes. In this case, the event is triggered when the user types something
   // into the text field.
+  duedate = (event) => {
+    this.setState({
+      due: new Date(event).toLocaleDateString()
+    });
+  };
+
   handleChange = (event) => {
     this.setState({
       content: event.target.value,
@@ -29,7 +38,8 @@ class AddTodo extends Component {
       this.props.addTodo(this.state);
       this.setState({
         content: "",
-        date: ""
+        date: "",
+        due : null,
       });
     }
   };
@@ -46,12 +56,25 @@ class AddTodo extends Component {
         <TextField
           label="Add New Item"
           variant="outlined"
+          data-testid = "new-item-input"
           onChange={this.handleChange}
           value={this.state.content}
         />
+        
+        <LocalizationProvider dateAdapter={AdapterDateFns}>         
+          <DesktopDatePicker
+              id="new-item-date"
+              label="Due Date"
+              value={this.state.due}
+              onChange={this.duedate}
+              renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+      
         <Button
           style={{ marginLeft: "10px" }}
           onClick={this.handleSubmit}
+          data-testid = "new-item-button"
           variant="contained"
           color="primary"
         >
